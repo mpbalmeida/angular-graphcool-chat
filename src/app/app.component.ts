@@ -1,5 +1,7 @@
+import { Apollo } from 'apollo-angular';
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-root',
@@ -11,14 +13,14 @@ export class AppComponent {
   private apiUrl = 'https://api.graph.cool/simple/v1/cjjd1m0ew0vu6015813vk3c13';
 
   constructor(
-    private http: HttpClient
+    private apollo: Apollo
   ) {
     this.allUsers();
   }
 
   allUsers(): void {
-    const body = {
-      query: `
+    this.apollo.query({
+      query: gql `
         query {
           allUsers{
             id
@@ -26,10 +28,7 @@ export class AppComponent {
             email
           }
         }
-      `
-    };
-
-    this.http.post(this.apiUrl, body)
-    .subscribe(res => console.log(res));
+        `
+    }).subscribe(res => console.log(res));
   }
 }
