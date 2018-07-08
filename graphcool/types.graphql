@@ -1,0 +1,44 @@
+# The following types define the data model of the example service
+# based on which the GraphQL API is generated
+
+type User @model {
+  id: ID! @isUnique
+  name: String!
+  email: String! @isUnique
+  password: String!
+  photo: File @relation(name: "UserPhoto")
+  chats: [Chat!]! @relation(name: "UsersOnChats")
+  messages: [Message!]! @relation(name: "MessagesOnUser")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type File @model {
+  id: ID! @isUnique
+  name: String
+  secret: String
+  size: Int
+  url: String
+  contentType: String
+  user: User @relation(name: "UserPhoto")
+  chat: Chat @relation(name: "ChatPhoto")
+}
+
+type Chat @model {
+  id: ID! @isUnique
+  title: String
+  isGroup: Boolean! @defaultValue(value: "false")
+  users: [User!]! @relation(name: "UsersOnChats")
+  messages: [Message!]!  @relation(name: "MessagesOnChat")
+  photo: File @relation(name: "ChatPhoto")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Message @model {
+  id: ID! @isUnique
+  text: String!
+  sender: User! @relation(name: "MessagesOnUser")
+  chat: Chat! @relation(name: "MessagesOnChat")
+  createdAt: DateTime!
+}
