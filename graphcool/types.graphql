@@ -41,4 +41,5 @@ type Message @model {
   sender: User! @relation(name: "MessagesOnUser")
   chat: Chat! @relation(name: "MessagesOnChat")
   createdAt: DateTime!
+
 }
