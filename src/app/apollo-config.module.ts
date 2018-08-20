@@ -41,6 +41,5 @@ export class ApolloConfigModule {
       ]),
       cache: new InMemoryCache()
     });
-    console.log(environment.production);
   }
 }
