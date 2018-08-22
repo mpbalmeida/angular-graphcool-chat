@@ -4,6 +4,7 @@ import {Observable, of, ReplaySubject, throwError} from 'rxjs';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
 import {AUTHENTICATE_USER_MUTATION, LOGGED_IN_USER_QUERY, LoggedInUserQuery, SIGNUP_USER_MUTATION} from './auth.graphql';
 import {StorageKeys} from '../../storage-keys';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class AuthService {
   private _isAuthenticated = new ReplaySubject<boolean>(1);
 
   constructor(
-    private apollo: Apollo
+    private apollo: Apollo,
+    private router: Router
   ) {
     this.isAuthenticated.subscribe(is => console.log('AuthState', is));
     this.init();
@@ -76,6 +78,15 @@ export class AuthService {
     );
   }
 
+  logout(): void {
+    window.localStorage.removeItem(StorageKeys.AUTH_TOKEN);
+    window.localStorage.removeItem(StorageKeys.KEEP_SIGNED);
+    this.keepSigned = false;
+    this._isAuthenticated.next(false);
+    this.router.navigate(['/login']);
+    this.apollo.getClient().resetStore();
+  }
+
   autoLogin(): Observable<void> {
     if (!this.keepSigned) {
       this._isAuthenticated.next(false);
@@ -89,7 +100,11 @@ export class AuthService {
           const token = window.localStorage.getItem(StorageKeys.AUTH_TOKEN);
           this.setAuthState({token, isAuthenticated: authData.isAuthenticated});
         }),
-        mergeMap(res => of())
+        mergeMap(res => of()),
+        catchError(error => {
+          this.setAuthState({token: null, isAuthenticated: false});
+          return throwError(error);
+        })
       );
   }
 
