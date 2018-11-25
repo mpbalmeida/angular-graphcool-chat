@@ -34,6 +34,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.createForm();
+    const userData = this.authService.getRememberMe();
+    if (userData) {
+      this.email.setValue(userData.email);
+      this.password.setValue(userData.password);
+    }
   }
 
   ngOnDestroy(): void {
@@ -62,6 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .subscribe( res => {
         console.log('redirection...', res);
+        this.authService.setRememberMe(this.loginForm.value);
         const redirect: string = this.authService.redirectUrl || '/dashboard';
         // redirect with router
         console.log('route to redirect', redirect);
@@ -81,6 +87,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService.toggleKeepSigned();
   }
 
+  onRememberMe() {
+    this.authService.toggleRememberMe();
+  }
+
   changeAction(): void {
     this.configs.isLogin = !this.configs.isLogin;
     this.configs.actionText = !this.configs.isLogin ? 'SignUp' : 'SignIn';
@@ -93,6 +103,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   get email(): FormControl { return <FormControl>this.loginForm.get('email'); }
 
   get password(): FormControl { return <FormControl>this.loginForm.get('password'); }
+
 
 
 }

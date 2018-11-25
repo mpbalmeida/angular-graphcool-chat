@@ -1,4 +1,5 @@
 import { Apollo } from 'apollo-angular';
+import { Base64 } from 'js-base64';
 import { Injectable } from '@angular/core';
 import {Observable, of, ReplaySubject, throwError} from 'rxjs';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
@@ -13,6 +14,7 @@ export class AuthService {
 
   keepSigned: boolean;
   redirectUrl: string;
+  remeberMe: boolean;
   private _isAuthenticated = new ReplaySubject<boolean>(1);
 
   constructor(
@@ -25,7 +27,7 @@ export class AuthService {
 
   init(): void {
     this.keepSigned = JSON.parse(window.localStorage.getItem(StorageKeys.KEEP_SIGNED));
-    console.log('Keep signed', this.keepSigned);
+    this.remeberMe = JSON.parse(window.localStorage.getItem(StorageKeys.REMEMBER_ME));
   }
   get isAuthenticated(): Observable<boolean> {
     return this._isAuthenticated.asObservable();
@@ -62,6 +64,30 @@ export class AuthService {
   toggleKeepSigned(): void {
     this.keepSigned = !this.keepSigned;
     window.localStorage.setItem(StorageKeys.KEEP_SIGNED, this.keepSigned.toString());
+  }
+
+  toggleRememberMe(): void {
+    this.remeberMe = !this.remeberMe;
+    window.localStorage.setItem(StorageKeys.REMEMBER_ME, this.remeberMe.toString());
+    if (!this.remeberMe) {
+      window.localStorage.removeItem(StorageKeys.USER_EMAIL);
+      window.localStorage.removeItem(StorageKeys.USER_PASSWORD);
+    }
+  }
+
+  setRememberMe(user: { email: string, password: string}): void {
+    if (this.remeberMe) {
+      window.localStorage.setItem(StorageKeys.USER_EMAIL, Base64.encode(user.email));
+      window.localStorage.setItem(StorageKeys.USER_PASSWORD, Base64.encode(user.password));
+    }
+  }
+
+  getRememberMe(): {email: string, password: string} {
+    if (!this.remeberMe) { return null; }
+    return {
+      email: Base64.decode(window.localStorage.getItem(StorageKeys.USER_EMAIL)),
+      password: Base64.decode(window.localStorage.getItem(StorageKeys.USER_PASSWORD)),
+    };
   }
 
   private validateToken(): Observable<{id: string, isAuthenticated: boolean}> {
