@@ -7,7 +7,7 @@ import {
   MatFormFieldModule, MatIconModule,
   MatInputModule, MatLineModule,
   MatListModule,
-  MatProgressSpinnerModule,
+  MatProgressSpinnerModule, MatSidenavModule,
   MatSlideToggleModule,
   MatSnackBarModule,
   MatToolbarModule,
@@ -25,6 +25,7 @@ import {
     MatListModule,
     MatProgressSpinnerModule,
     MatSlideToggleModule,
+    MatSidenavModule,
     MatSnackBarModule,
     MatToolbarModule,
     ReactiveFormsModule
