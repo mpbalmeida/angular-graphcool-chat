@@ -9,7 +9,9 @@ export const USER_CHATS_QUERY = gql`
   query UserChatsQuery($userId: ID!){
     allChats(
       filter: {
-        id: $userId
+        users_some: {
+          id: $userId
+        }
       }
     ){
       id
