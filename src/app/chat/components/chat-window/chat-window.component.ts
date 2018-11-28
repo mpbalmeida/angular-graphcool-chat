@@ -25,6 +25,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.title.setTitle('Loading...');
     this.subscriptions.push(
       this.route.data
         .pipe(
