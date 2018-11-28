@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, ParamMap} from '@angular/router';
 import {Chat} from '../../models/chat.model';
 import {Subscription} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, mergeMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-window',
@@ -12,6 +12,7 @@ import {map} from 'rxjs/operators';
 export class ChatWindowComponent implements OnInit, OnDestroy {
 
   chat: Chat;
+  recipientId: string = null;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -22,7 +23,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.route.data
         .pipe(
-          map(routeData => this.chat = routeData.chat)
+          map(routeData => this.chat = routeData.chat),
+          mergeMap(() => this.route.paramMap),
+          tap((params: ParamMap) => {
+            if (!this.chat) {
+              this.recipientId = params.get('id');
+            }
+          })
         )
         .subscribe()
     );
