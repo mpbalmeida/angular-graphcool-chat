@@ -2,7 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {Chat} from '../../models/chat.model';
 import {Subscription} from 'rxjs';
-import {map, mergeMap, tap} from 'rxjs/operators';
+import {map, mergeMap, take, tap} from 'rxjs/operators';
+import {Title} from '@angular/platform-browser';
+import {UserService} from '../../../core/services/user.service';
+import {User} from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-chat-window',
@@ -16,7 +19,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private title: Title,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -28,6 +33,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
           tap((params: ParamMap) => {
             if (!this.chat) {
               this.recipientId = params.get('id');
+              this.userService.getUserById(this.recipientId)
+                .pipe(take(1))
+                .subscribe((user: User) => this.title.setTitle(user.name));
+            } else {
+              this.title.setTitle(this.chat.title || this.chat.users[0].name);
             }
           })
         )
@@ -37,6 +47,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.title.setTitle('Angular Graphcool Chat');
   }
 
 }
