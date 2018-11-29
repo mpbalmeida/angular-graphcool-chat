@@ -1,8 +1,10 @@
-<ul>
-  <li *ngFor="let message of messages$ | async">
-    {{message.text}}
-  </li>
-</ul>
+<section class="content">
+  <app-chat-message
+    *ngFor="let m of messages$ | async"
+    [message]="m"
+    [isFromSender]="ifFromSender(m)">
+  </app-chat-message>
+</section>
 
 <mat-toolbar class="footer" color="primary">
   <mat-toolbar-row>

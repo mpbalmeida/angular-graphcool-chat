@@ -92,4 +92,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.title.setTitle('Angular Graphcool Chat');
   }
 
+  ifFromSender(m: Message): Boolean {
+    return m.sender.id === this.authService.authUser.id;
+  }
 }
