@@ -30,3 +30,26 @@ export const GET_CHAT_MESSAGES_QUERY = gql`
     }
   }
 `;
+
+export const CREATE_MESSAGE_MUTATION = gql`
+  mutation CreateMessageMutation($text: String!, $chatId: ID!, $senderId: ID!){
+    createMessage(
+      text: $text,
+      senderId: $senderId,
+      chatId: $chatId
+    ) {
+      id
+      text
+      createdAt
+      sender {
+        id
+        name
+        email
+        createdAt
+      }
+      chat {
+        id
+      }
+    }
+  }
+`;
