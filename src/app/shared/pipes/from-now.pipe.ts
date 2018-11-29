@@ -1,16 +1,21 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import {AppConfigService} from '../../core/services/app-config.service';
 
 @Pipe({
   name: 'fromNow'
 })
 export class FromNowPipe implements PipeTransform {
 
+  constructor(
+    private appConfig: AppConfigService
+  ) {}
+
   transform(date: string): string {
-    return this.timeDifferenceForDate(date);
+    return this.timeDifferenceForDate(date, this.appConfig.timeDifference);
   }
 
-  timeDifferenceForDate(date: string): string {
-    const now = new Date().getTime();
+  timeDifferenceForDate(date: string, timeDifference: number): string {
+    const now = new Date().getTime() + timeDifference;
     const updated = new Date(date).getTime();
     return this.getTimeDifference(now, updated);
   }
