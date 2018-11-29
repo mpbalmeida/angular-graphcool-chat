@@ -3,7 +3,7 @@ import {Component, Input, OnInit} from '@angular/core';
 @Component({
   selector: 'app-avatar',
   template: `
-    <div class="avatar-container" [ngStyle]="{containerStyles}">
+    <div class="avatar-container" [ngStyle]="containerStyles">
       <img [src]="src" [title]="title || 'Avatar'" [ngStyle]="imageStyles"/>
       <ng-content></ng-content>
     </div>
