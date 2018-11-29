@@ -18,6 +18,7 @@ import { AvatarComponent } from './components/avatar/avatar.component';
 @NgModule({
   declarations: [NoRecordComponent, AvatarComponent],
   imports: [
+    CommonModule,
     MatIconModule
   ],
   exports: [
