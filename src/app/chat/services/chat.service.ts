@@ -18,22 +18,23 @@ export class ChatService {
   ) { }
 
   getUserChats(): Observable<Chat[]> {
-    return this.apollo.query<AllChatsQuery>({
+    return this.apollo.watchQuery<AllChatsQuery>({
       query: USER_CHATS_QUERY,
       variables: {
         loggedUserId: this.authService.authUser.id
       }
-    }).pipe(
-      map(res => res.data.allChats),
-      map((chats: Chat[]) => {
-        const chatsToSort = chats.slice();
-        return chatsToSort.sort((o1, o2) => {
-          const valueO1 = o1.messages.length > 0 ? new Date(o1.messages[0].createdAt).getTime() : new Date(o1.createdAt).getTime();
-          const valueO2 = o2.messages.length > 0 ? new Date(o2.messages[0].createdAt).getTime() : new Date(o2.createdAt).getTime();
+    }).valueChanges
+      .pipe(
+        map(res => res.data.allChats),
+        map((chats: Chat[]) => {
+          const chatsToSort = chats.slice();
+          return chatsToSort.sort((o1, o2) => {
+            const valueO1 = o1.messages.length > 0 ? new Date(o1.messages[0].createdAt).getTime() : new Date(o1.createdAt).getTime();
+            const valueO2 = o2.messages.length > 0 ? new Date(o2.messages[0].createdAt).getTime() : new Date(o2.createdAt).getTime();
 
-          return valueO2 - valueO1;
-        });
-      })
+            return valueO2 - valueO1;
+          });
+        })
     );
   }
 
